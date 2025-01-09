@@ -7,69 +7,69 @@
 </head>
 <body>
   <h1>Registro de Reinstrucciones</h1>
-  <div id="output"></div>
-
+  <div id="datos">
+    Cargando datos...
+  </div>
   <script>
-    const backendUrl = "TU_URL_BACKEND_GOOGLE_SCRIPT"; // Reemplaza con tu URL
-
     async function fetchData() {
-      console.log("Iniciando la solicitud al backend...");
+      const url = "https://script.googleusercontent.com/macros/echo?user_content_key=sJtnKXuFQ9_ChuVD74SZ26chL7ZVrtzMMJSyD1Sii6xfp8_nFI8ScRdxorlBzCn2OTNNX5uxYmV8AJi0xXs52cTNpudJSz2Ym5_BxDlH2jW0nuo2oDemN9CCS2h10ox_1xSncGQajx_ryfhECjZEnKO4jwi95qGcUmWcUrguI1VSbo6NqjcjN0ffTrm5WFDh_6Ne5f-s9BwTrN4td6_uL8OM9DzUsaDY04LBNr4MM6FVHkTuqo9Zutz9Jw9Md8uu&lib=MP0WHv2PNRJpvWShje2tXQeiALzXLYooN"; // Reemplaza esto con el enlace público que tienes
+      console.log("Iniciando la solicitud de datos...");
+
       try {
-        const response = await fetch(backendUrl, {
-          method: 'GET',
-          mode: 'cors', // Habilita CORS en la solicitud
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
+        const response = await fetch(url);
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
-        console.log("Datos recibidos del backend:", data);
 
-        if (data && data.data && data.data.length > 0) {
-          renderData(data.data);
-        } else {
-          document.getElementById("output").innerHTML = "<p>No hay datos disponibles.</p>";
-        }
+        console.log("Datos recibidos:", data);
+
+        // Renderizar datos en un formato simple
+        renderData(data.data || []);
       } catch (error) {
-        console.error("Error al obtener datos del backend:", error.message);
-        document.getElementById("output").innerHTML = `<p>Error: ${error.message}</p>`;
+        console.error("Error al obtener los datos:", error.message);
+        document.getElementById("datos").innerText = `Error: ${error.message}`;
       }
     }
 
     function renderData(data) {
-      const output = document.getElementById("output");
-      const table = document.createElement("table");
+      const container = document.getElementById("datos");
 
-      // Construir encabezados
+      if (!data || data.length === 0) {
+        container.innerHTML = "<p>No hay datos disponibles.</p>";
+        return;
+      }
+
+      // Formatear los datos en una tabla
+      const table = document.createElement("table");
       const headers = Object.keys(data[0]);
+
+      // Crear la fila de encabezados
       const headerRow = document.createElement("tr");
       headers.forEach(header => {
         const th = document.createElement("th");
-        th.textContent = header;
+        th.innerText = header;
         headerRow.appendChild(th);
       });
       table.appendChild(headerRow);
 
-      // Construir filas
+      // Crear las filas de datos
       data.forEach(row => {
-        const tr = document.createElement("tr");
+        const dataRow = document.createElement("tr");
         headers.forEach(header => {
           const td = document.createElement("td");
-          td.textContent = row[header];
-          tr.appendChild(td);
+          td.innerText = row[header];
+          dataRow.appendChild(td);
         });
-        table.appendChild(tr);
+        table.appendChild(dataRow);
       });
 
-      output.appendChild(table);
+      // Agregar la tabla al contenedor
+      container.innerHTML = "";
+      container.appendChild(table);
     }
 
+    // Llamar a la función para obtener los datos al cargar la página
     fetchData();
   </script>
 </body>
 </html>
+
