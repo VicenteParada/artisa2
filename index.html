@@ -1,76 +1,75 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Registro de Reinstrucciones</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      margin: 0;
-      padding: 0;
-    }
-    .container {
-      padding: 20px;
-    }
-    .error {
-      color: red;
-    }
-    .success {
-      color: green;
-    }
-  </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Registro de Reinstrucciones</h1>
-    <div id="status" class="error">Cargando datos...</div>
-    <pre id="data"></pre>
-  </div>
-  <script>
-    console.log('Iniciando la solicitud al backend...');
+  <h1>Registro de Reinstrucciones</h1>
+  <div id="output"></div>
 
-    const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbyVq-J0-lX0d3HIz2iIfNLCkTy4nEKpOIoN9RM6VMWisyryFyCKjwD0GnVH-wquUwE7_Q/exec'; // Coloca aquí la URL del Apps Script
+  <script>
+    const backendUrl = "TU_URL_BACKEND_GOOGLE_SCRIPT"; // Reemplaza con tu URL
 
     async function fetchData() {
-      document.getElementById('status').textContent = 'Cargando datos...';
-
+      console.log("Iniciando la solicitud al backend...");
       try {
-        const response = await fetch(BACKEND_URL);
+        const response = await fetch(backendUrl, {
+          method: 'GET',
+          mode: 'cors', // Habilita CORS en la solicitud
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
 
         if (!response.ok) {
-          throw new Error(`Error HTTP: ${response.status}`);
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        console.log('Respuesta recibida del backend.');
         const data = await response.json();
+        console.log("Datos recibidos del backend:", data);
 
-        if (data.error) {
-          console.error('Error en la respuesta del backend:', data.error);
-          document.getElementById('status').textContent = `Error: ${data.error}`;
-          return;
+        if (data && data.data && data.data.length > 0) {
+          renderData(data.data);
+        } else {
+          document.getElementById("output").innerHTML = "<p>No hay datos disponibles.</p>";
         }
-
-        if (!data.data || data.data.length === 0) {
-          console.warn('No hay datos para mostrar.');
-          document.getElementById('status').textContent = 'No hay datos disponibles.';
-          return;
-        }
-
-        document.getElementById('status').textContent = 'Datos cargados correctamente.';
-        document.getElementById('status').className = 'success';
-
-        const formattedData = JSON.stringify(data.data, null, 2);
-        document.getElementById('data').textContent = formattedData;
-        console.log('Datos procesados y mostrados correctamente.');
       } catch (error) {
-        console.error('Error en la solicitud o procesamiento:', error.message);
-        document.getElementById('status').textContent = `Error: ${error.message}`;
+        console.error("Error al obtener datos del backend:", error.message);
+        document.getElementById("output").innerHTML = `<p>Error: ${error.message}</p>`;
       }
     }
 
-    // Llamar al backend cada X tiempo
-    setInterval(fetchData, 60000); // Actualiza los datos cada 60 segundos
-    fetchData(); // Primera carga
+    function renderData(data) {
+      const output = document.getElementById("output");
+      const table = document.createElement("table");
+
+      // Construir encabezados
+      const headers = Object.keys(data[0]);
+      const headerRow = document.createElement("tr");
+      headers.forEach(header => {
+        const th = document.createElement("th");
+        th.textContent = header;
+        headerRow.appendChild(th);
+      });
+      table.appendChild(headerRow);
+
+      // Construir filas
+      data.forEach(row => {
+        const tr = document.createElement("tr");
+        headers.forEach(header => {
+          const td = document.createElement("td");
+          td.textContent = row[header];
+          tr.appendChild(td);
+        });
+        table.appendChild(tr);
+      });
+
+      output.appendChild(table);
+    }
+
+    fetchData();
   </script>
 </body>
 </html>
