@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Registro de Reinstrucciones</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      padding: 20px;
+    }
+    .error {
+      color: red;
+    }
+    .success {
+      color: green;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Registro de Reinstrucciones</h1>
+    <div id="status" class="error">Cargando datos...</div>
+    <pre id="data"></pre>
+  </div>
+  <script>
+    console.log('Iniciando la solicitud al backend...');
+
+    const BACKEND_URL = 'https://script.google.com/macros/s/XXXXXXXXXXXX/exec'; // Coloca aquí la URL del Apps Script
+
+    async function fetchData() {
+      document.getElementById('status').textContent = 'Cargando datos...';
+
+      try {
+        const response = await fetch(BACKEND_URL);
+
+        if (!response.ok) {
+          throw new Error(`Error HTTP: ${response.status}`);
+        }
+
+        console.log('Respuesta recibida del backend.');
+        const data = await response.json();
+
+        if (data.error) {
+          console.error('Error en la respuesta del backend:', data.error);
+          document.getElementById('status').textContent = `Error: ${data.error}`;
+          return;
+        }
+
+        if (!data.data || data.data.length === 0) {
+          console.warn('No hay datos para mostrar.');
+          document.getElementById('status').textContent = 'No hay datos disponibles.';
+          return;
+        }
+
+        document.getElementById('status').textContent = 'Datos cargados correctamente.';
+        document.getElementById('status').className = 'success';
+
+        const formattedData = JSON.stringify(data.data, null, 2);
+        document.getElementById('data').textContent = formattedData;
+        console.log('Datos procesados y mostrados correctamente.');
+      } catch (error) {
+        console.error('Error en la solicitud o procesamiento:', error.message);
+        document.getElementById('status').textContent = `Error: ${error.message}`;
+      }
+    }
+
+    // Llamar al backend cada X tiempo
+    setInterval(fetchData, 60000); // Actualiza los datos cada 60 segundos
+    fetchData(); // Primera carga
+  </script>
+</body>
+</html>
