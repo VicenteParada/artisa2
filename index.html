@@ -4,6 +4,51 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Registro de Reinstrucciones</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+    h1 {
+      text-align: center;
+      color: #fff;
+      background-color: #4CAF50;
+      padding: 20px;
+      margin: 0;
+    }
+    #datos {
+      margin: 20px auto;
+      width: 90%;
+      max-width: 1200px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      overflow-x: auto;
+      padding: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px;
+      border-bottom: 1px solid #ddd;
+    }
+    th {
+      background-color: #4CAF50;
+      color: white;
+    }
+    tr:hover {
+      background-color: #f1f1f1;
+    }
+    p {
+      text-align: center;
+      color: #777;
+    }
+  </style>
 </head>
 <body>
   <h1>Registro de Reinstrucciones</h1>
@@ -12,7 +57,7 @@
   </div>
   <script>
     async function fetchData() {
-      const url = "https://script.googleusercontent.com/macros/echo?user_content_key=sJtnKXuFQ9_ChuVD74SZ26chL7ZVrtzMMJSyD1Sii6xfp8_nFI8ScRdxorlBzCn2OTNNX5uxYmV8AJi0xXs52cTNpudJSz2Ym5_BxDlH2jW0nuo2oDemN9CCS2h10ox_1xSncGQajx_ryfhECjZEnKO4jwi95qGcUmWcUrguI1VSbo6NqjcjN0ffTrm5WFDh_6Ne5f-s9BwTrN4td6_uL8OM9DzUsaDY04LBNr4MM6FVHkTuqo9Zutz9Jw9Md8uu&lib=MP0WHv2PNRJpvWShje2tXQeiALzXLYooN"; // Reemplaza esto con el enlace público que tienes
+      const url = "https://script.googleusercontent.com/macros/echo?user_content_key=sJtnKXuFQ9_ChuVD74SZ26chL7ZVrtzMMJSyD1Sii6xfp8_nFI8ScRdxorlBzCn2OTNNX5uxYmV8AJi0xXs52cTNpudJSz2Ym5_BxDlH2jW0nuo2oDemN9CCS2h10ox_1xSncGQajx_ryfhECjZEnKO4jwi95qGcUmWcUrguI1VSbo6NqjcjN0ffTrm5WFDh_6Ne5f-s9BwTrN4td6_uL8OM9DzUsaDY04LBNr4MM6FVHkTuqo9Zutz9Jw9Md8uu&lib=MP0WHv2PNRJpvWShje2tXQeiALzXLYooN";
       console.log("Iniciando la solicitud de datos...");
 
       try {
@@ -22,7 +67,6 @@
 
         console.log("Datos recibidos:", data);
 
-        // Renderizar datos en un formato simple
         renderData(data.data || []);
       } catch (error) {
         console.error("Error al obtener los datos:", error.message);
@@ -38,11 +82,9 @@
         return;
       }
 
-      // Formatear los datos en una tabla
       const table = document.createElement("table");
       const headers = Object.keys(data[0]);
 
-      // Crear la fila de encabezados
       const headerRow = document.createElement("tr");
       headers.forEach(header => {
         const th = document.createElement("th");
@@ -51,7 +93,6 @@
       });
       table.appendChild(headerRow);
 
-      // Crear las filas de datos
       data.forEach(row => {
         const dataRow = document.createElement("tr");
         headers.forEach(header => {
@@ -62,12 +103,10 @@
         table.appendChild(dataRow);
       });
 
-      // Agregar la tabla al contenedor
       container.innerHTML = "";
       container.appendChild(table);
     }
 
-    // Llamar a la función para obtener los datos al cargar la página
     fetchData();
   </script>
 </body>
